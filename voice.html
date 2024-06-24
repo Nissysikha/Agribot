@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AI Bot</title>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+</head>
+<body>
+  <script>
+    let aiapi = "8LgqT5Aagjoa";
+
+    window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    let finalTranscript = '';
+   
+    let recognition = new window.SpeechRecognition();
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 10;
+    recognition.continuous = true;
+    recognition.onresult = (event) => {
+      let interimTranscript = '';
+      for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
+        let transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+            document.getElementById("show").innerHTML = "Me :"+ transcript;
+          console.log(transcript);
+
+          async function fetchText() {
+          let response = await fetch('https://api.pgamerx.com/v4/ai?message='+transcript, {
+            method: "GET",
+            headers: {"x-api-key": aiapi}
+          });
+          let data = await response.text();          
+          let voiceout = JSON.parse(data);
+          console.log(voiceout[0]);
+          document.getElementById("show").innerHTML = "Robot :"+ voiceout[0].message;
+         responsiveVoice.speak(voiceout[0].message, "UK English Female");
+}
+fetchText();
+
+         
+      }
+    } 
+}
+
+
+
+    
+
+    function startButton(event) {
+
+    recognition.start();
+  
+}
+
+ recognition.start();
+  </script>
+  <div id="show"></div>
+
+<button id="start_button" onclick="startButton(event)"> Start</button>
+
+ 
+</body>
+
+<script>
+  document.querySelector("#start_button").addEventListener("click",()=>{
+  var msg="Hello there my friend?"
+  
+  var ut=new SpeechSynthesisUtterance(msg)
+  window.speechSynthesis.cancel()
+  speechSynthesis.speak(ut)})
+</script>
+
+</html>
